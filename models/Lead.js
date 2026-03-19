@@ -5,11 +5,7 @@ const leadSchema = new mongoose.Schema({
   phone: String,
   property: String,
   status: { type: String, default: 'new' },
-
-  // 🔥 FOLLOW-UP TRACKING
-  followup1: { type: Boolean, default: false },
-  followup2: { type: Boolean, default: false },
-
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now }
 });
 
