@@ -6,12 +6,12 @@ exports.createLead = async (req, res) => {
   try {
     const lead = new Lead({
       ...req.body,
-      userId: req.body.userId   // 👈 userId add
+      userId: req.user.userId   // 🔥 JWT se userId
     });
 
     await lead.save();
 
-    // WhatsApp message send
+    // WhatsApp message
     await sendWhatsApp(
       lead.phone,
       `Hi ${lead.name}, thanks for your interest!`
@@ -23,12 +23,12 @@ exports.createLead = async (req, res) => {
   }
 };
 
-// ✅ GET LEADS (FILTER BY USER)
+// ✅ GET LEADS (ONLY LOGGED USER)
 exports.getLeads = async (req, res) => {
   try {
-    const userId = req.query.userId;
-
-    const leads = await Lead.find({ userId }).sort({ createdAt: -1 });
+    const leads = await Lead.find({
+      userId: req.user.userId   // 🔥 JWT se filter
+    }).sort({ createdAt: -1 });
 
     res.json(leads);
   } catch (err) {
@@ -38,9 +38,14 @@ exports.getLeads = async (req, res) => {
 
 // ✅ UPDATE STATUS
 exports.updateStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
-  await Lead.findByIdAndUpdate(id, { status });
-  res.json({ success: true });
+    await Lead.findByIdAndUpdate(id, { status });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
