@@ -9,9 +9,8 @@ const {
 
 const authMiddleware = require('../middleware/authMiddleware');
 
-// 🔥 PROTECT ROUTES
-router.post('/', authMiddleware, createLead);
 router.get('/', authMiddleware, getLeads);
+router.post('/', authMiddleware, createLead);
 router.put('/:id', authMiddleware, updateStatus);
 
 module.exports = router;

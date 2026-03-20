@@ -27,8 +27,9 @@ exports.createLead = async (req, res) => {
 exports.getLeads = async (req, res) => {
   try {
     const leads = await Lead.find({
-        userId: req.user.id   // 🔥 JWT se filter
-    }).sort({ createdAt: -1 });
+        //userId: req.user.id   // 🔥 JWT se filter
+        userId: req.user.userId
+      }).sort({ createdAt: -1 });
 
     res.json(leads);
   } catch (err) {
