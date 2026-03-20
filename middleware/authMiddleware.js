@@ -9,7 +9,9 @@ module.exports = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, "secretkey");
-
+    
+    console.log("DECODED:", decoded);
+    
     req.user = decoded; // 🔥 userId yaha milega
 
     next();
