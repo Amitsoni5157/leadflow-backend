@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const {
-  createLead,
-  getLeads,
-  updateStatus
+const { getLeads, 
+  createLead, 
+  updateLead, 
+  deleteLead 
+
+
 } = require('../controllers/leadController');
 
 const authMiddleware = require('../middleware/authMiddleware');
