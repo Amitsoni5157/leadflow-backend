@@ -43,7 +43,26 @@ exports.updateStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    await Lead.findByIdAndUpdate(id, { status });
+   // await Lead.findByIdAndUpdate(id, { status });
+  await Lead.findOneAndUpdate(
+    { _id: id, userId: req.user.userId },
+    { status }
+  );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+//DELETE LEAD
+exports.deleteLead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await Lead.findOneAndDelete({
+      _id: id,
+      userId: req.user.userId   // 🔐 security
+    });
 
     res.json({ success: true });
   } catch (err) {
