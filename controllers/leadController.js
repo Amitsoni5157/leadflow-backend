@@ -38,7 +38,7 @@ exports.getLeads = async (req, res) => {
 };
 
 // ✅ UPDATE STATUS
-exports.updateStatus = async (req, res) => {
+exports.updateLead = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
