@@ -6,7 +6,7 @@ const leadSchema = new mongoose.Schema({
   phone: String,
   property: String,
   status: { type: String, default: 'new' },
-  userId: String,
+  userId: { type: String, required: true },
   // userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now }
 });

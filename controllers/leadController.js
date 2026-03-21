@@ -6,7 +6,7 @@ exports.createLead = async (req, res) => {
   try {
     const lead = new Lead({
       ...req.body,
-      userId: req.user.userId   // 🔥 JWT se userId
+      userId: req.user.userId
     });
 
     await lead.save();
@@ -23,13 +23,20 @@ exports.createLead = async (req, res) => {
   }
 };
 
-// ✅ GET LEADS (ONLY LOGGED USER)
+// ✅ GET LEADS (ROLE BASED)
 exports.getLeads = async (req, res) => {
   try {
-    const leads = await Lead.find({
-        //userId: req.user.id   // 🔥 JWT se filter
+    let leads;
+
+    if (req.user.role === "admin") {
+      // 👑 Admin → sab leads
+      leads = await Lead.find().sort({ createdAt: -1 });
+    } else {
+      // 👤 User → sirf apne leads
+      leads = await Lead.find({
         userId: req.user.userId
       }).sort({ createdAt: -1 });
+    }
 
     res.json(leads);
   } catch (err) {
@@ -37,32 +44,57 @@ exports.getLeads = async (req, res) => {
   }
 };
 
-// ✅ UPDATE STATUS
+// ✅ UPDATE STATUS (SECURE)
 exports.updateLead = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
-   // await Lead.findByIdAndUpdate(id, { status });
-  await Lead.findOneAndUpdate(
-    { _id: id, userId: req.user.userId },
-    { status }
-  );
-    res.json({ success: true });
+    let lead;
+
+    if (req.user.role === "admin") {
+      // 👑 Admin → kisi ka bhi update
+      lead = await Lead.findByIdAndUpdate(id, { status }, { new: true });
+    } else {
+      // 👤 User → sirf apna
+      lead = await Lead.findOneAndUpdate(
+        { _id: id, userId: req.user.userId },
+        { status },
+        { new: true }
+      );
+    }
+
+    if (!lead) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    res.json({ success: true, lead });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-//DELETE LEAD
+// ❌ DELETE LEAD (SECURE)
 exports.deleteLead = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await Lead.findOneAndDelete({
-      _id: id,
-      userId: req.user.userId   // 🔐 security
-    });
+    let lead;
+
+    if (req.user.role === "admin") {
+      // 👑 Admin → delete anyone
+      lead = await Lead.findByIdAndDelete(id);
+    } else {
+      // 👤 User → sirf apna
+      lead = await Lead.findOneAndDelete({
+        _id: id,
+        userId: req.user.userId
+      });
+    }
+
+    if (!lead) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
 
     res.json({ success: true });
   } catch (err) {
