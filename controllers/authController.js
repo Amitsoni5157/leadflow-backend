@@ -1,3 +1,4 @@
+// authController.js
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
@@ -38,24 +39,34 @@ exports.register = async (req, res) => {
 
 // LOGIN
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email, password });
+    console.log("LOGIN BODY:", req.body);
 
-  if (!user) {
-    return res.status(401).json({ message: "Invalid credentials" });
+    const user = await User.findOne({ email, password });
+
+    console.log("USER FOUND:", user);
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = require('jsonwebtoken').sign(
+      {
+        userId: user._id,
+        role: user.role
+      },
+      "secretkey"
+    );
+
+    res.json({
+      token,
+      role: user.role
+    });
+
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
-
-  const token = jwt.sign(
-    {
-      userId: user._id,
-      role: user.role   // 🔥 IMPORTANT
-    },
-    "secretkey"
-  );
-
-  res.json({
-    token,
-    role: user.role   // 🔥 FRONTEND ke liye
-  });
 };

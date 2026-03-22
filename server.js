@@ -34,6 +34,9 @@ app.use('/api/leads', leadRoutes);
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const userRoutes = require('./routes/users');
+app.use('/api/users', userRoutes);
+
 // Health check (optional but useful)
 app.get('/', (req, res) => {
   res.send("🚀 LeadFlow Backend Running");
