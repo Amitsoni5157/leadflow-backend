@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const Lead = require("../models/Lead");
-const auth = require("../middleware/auth");
+const auth = require("../middleware/authMiddleware");
 
 // 🔥 GET ANALYTICS
 router.get("/", auth, async (req, res) => {
