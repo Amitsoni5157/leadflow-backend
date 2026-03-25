@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const Lead = require('../models/Lead');
 const sendWhatsApp = require('./whatsappService');
 
-const TEST_MODE = true; // true = testing | false = production
+const TEST_MODE = false; // true = testing | false = production
 
 const SCHEDULE = TEST_MODE ? '*/2 * * * *' : '0 * * * *';
 

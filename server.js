@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = express(); 
 
 // 🔥 ===== FOLLOW-UP CONTROL SWITCH =====
-const ENABLE_FOLLOWUP = true; // 👉 change true/false as needed
+const ENABLE_FOLLOWUP = false; // 👉 change true/false as needed
 
 if (ENABLE_FOLLOWUP) {
   console.log("✅ Follow-up service ENABLED");
