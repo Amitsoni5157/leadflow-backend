@@ -41,6 +41,10 @@ router.put('/:id/followup', authMiddleware, async (req, res) => {
 
     lead.nextFollowUp = new Date(nextFollowUp);
 
+    lead.followUpHistory.push({
+      message: "Manual follow-up scheduled"
+    });
+
     // 👉 optional reset
     lead.followUpCount = 0;
 
@@ -53,5 +57,18 @@ router.put('/:id/followup', authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error ❌" });
   }
 });
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
 
+    if (!lead) {
+      return res.status(404).json({ message: "Lead not found" });
+    }
+
+    res.json(lead);
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = router;

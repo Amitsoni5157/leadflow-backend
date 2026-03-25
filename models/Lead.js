@@ -31,6 +31,13 @@ const leadSchema = new mongoose.Schema({
     }
   },
 
+  followUpHistory: [
+  {
+    date: { type: Date, default: Date.now },
+    message: String
+  }
+],
+
   followUpCount: {
     type: Number,
     default: 0
