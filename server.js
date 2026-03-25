@@ -8,7 +8,7 @@ require('dotenv').config();
 const app = express(); 
 
 // 🔥 ===== FOLLOW-UP CONTROL SWITCH =====
-const ENABLE_FOLLOWUP = false; // 👉 change true/false as needed
+const ENABLE_FOLLOWUP = true; // 👉 change true/false as needed
 
 if (ENABLE_FOLLOWUP) {
   console.log("✅ Follow-up service ENABLED");
@@ -36,6 +36,9 @@ app.use('/api/auth', authRoutes);
 
 const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
+
+const analyticsRoutes = require("./routes/analytics");
+app.use("/api/analytics", analyticsRoutes);
 
 // Health check (optional but useful)
 app.get('/', (req, res) => {
