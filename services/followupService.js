@@ -2,10 +2,8 @@ const cron = require('node-cron');
 const Lead = require('../models/Lead');
 const sendWhatsApp = require('./whatsappService');
 
-// 🔥 MODE SWITCH (yahi change karna hai bas)
-const TEST_MODE = true; // true = 2 min testing | false = production
+const TEST_MODE = true; // true = testing | false = production
 
-// ⏱ interval set
 const SCHEDULE = TEST_MODE ? '*/2 * * * *' : '0 * * * *';
 
 cron.schedule(SCHEDULE, async () => {
@@ -13,28 +11,17 @@ cron.schedule(SCHEDULE, async () => {
 
   const now = new Date();
 
-  // ✅ Smart fetch (sirf due leads)
-  const leads = await Lead.find({
-    $or: [
-      { nextFollowUp: { $lte: now } },
-      { nextFollowUp: { $exists: false } } // old leads fix
-    ]
-  });
+  const leads = await Lead.find();
 
   for (let lead of leads) {
 
-    // 🔥 OLD LEADS FIX
-    if (!lead.nextFollowUp) {
-      const next = new Date();
+    // 🔥 FORCE TESTING (IMPORTANT)
+    if (TEST_MODE) {
+      lead.nextFollowUp = new Date(now.getTime() - 60000); // past me set
+    }
 
-      if (TEST_MODE) {
-        next.setMinutes(next.getMinutes() + 2);
-      } else {
-        next.setDate(next.getDate() + 1);
-      }
-
-      lead.nextFollowUp = next;
-      await lead.save();
+    // ❌ Skip if not due
+    if (lead.nextFollowUp && lead.nextFollowUp > now) {
       continue;
     }
 
@@ -55,14 +42,14 @@ cron.schedule(SCHEDULE, async () => {
     await sendWhatsApp(lead.phone, message);
 
     // 🔄 update follow-up
-    lead.followUpCount += 1;
+    lead.followUpCount = (lead.followUpCount || 0) + 1;
 
     const nextDate = new Date();
 
     if (TEST_MODE) {
-      nextDate.setMinutes(nextDate.getMinutes() + 2); // 🔥 testing
+      nextDate.setMinutes(nextDate.getMinutes() + 2);
     } else {
-      nextDate.setDate(nextDate.getDate() + 1); // production
+      nextDate.setDate(nextDate.getDate() + 1);
     }
 
     lead.nextFollowUp = nextDate;
