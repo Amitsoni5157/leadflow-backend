@@ -71,4 +71,41 @@ router.get('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// 🌐 PUBLIC WEBSITE LEAD (NO AUTH)
+router.post('/public-lead', async (req, res) => {
+  try {
+    const { name, phone, property } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ message: "Name & Phone required" });
+    }
+
+    const lead = await Lead.create({
+      name,
+      phone,
+      property: property || "Website Lead",
+      userId: "AUTO",
+
+      // 🔥 follow-up auto start
+      nextFollowUp: new Date(),
+      followUpCount: 0,
+
+      followUpHistory: [
+        {
+          message: "Lead captured from Website"
+        }
+      ]
+    });
+
+    console.log("🌐 Website Lead Added:", lead.phone);
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("Website Lead Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
