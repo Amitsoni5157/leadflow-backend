@@ -60,9 +60,12 @@ exports.login = async (req, res) => {
       "secretkey"
     );
 
+    // ✅ FIXED RESPONSE
     res.json({
       token,
-      role: user.role
+      role: user.role,
+      userId: user._id,
+      email: user.email
     });
 
   } catch (err) {

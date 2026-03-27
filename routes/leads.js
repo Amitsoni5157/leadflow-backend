@@ -75,7 +75,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 // 🌐 PUBLIC WEBSITE LEAD (NO AUTH)
 router.post('/public-lead', async (req, res) => {
   try {
-    const { name, phone, property } = req.body;
+    const { name, phone, property, agentId } = req.body;
 
     if (!name || !phone) {
       return res.status(400).json({ message: "Name & Phone required" });
@@ -85,9 +85,10 @@ router.post('/public-lead', async (req, res) => {
       name,
       phone,
       property: property || "Website Lead",
-      userId: "AUTO",
 
-      // 🔥 follow-up auto start
+      // 🔥 ASSIGN TO AGENT
+      userId: agentId || "AUTO",
+
       nextFollowUp: new Date(),
       followUpCount: 0,
 
@@ -98,12 +99,12 @@ router.post('/public-lead', async (req, res) => {
       ]
     });
 
-    console.log("🌐 Website Lead Added:", lead.phone);
+    console.log("🌐 Lead Added for Agent:", agentId);
 
     res.json({ success: true });
 
   } catch (err) {
-    console.error("Website Lead Error:", err);
+    console.error("Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });

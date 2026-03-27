@@ -6,7 +6,10 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express(); 
+const path = require("path");
 
+// 🔥 static files serve
+app.use(express.static(path.join(__dirname, "public")));
 // 🔥 ===== FOLLOW-UP CONTROL SWITCH =====
 const ENABLE_FOLLOWUP = false; // 👉 change true/false as needed
 
