@@ -57,8 +57,9 @@ exports.login = async (req, res) => {
         userId: user._id,
         role: user.role
       },
-      "secretkey"
-    );
+      "secretkey",
+      { expiresIn: "7d" } // ✅ add this
+   );
 
     // ✅ FIXED RESPONSE
     res.json({

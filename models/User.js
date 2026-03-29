@@ -8,9 +8,9 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ["admin", "user"],
-    default: "user"
+    enum: ["admin", "agent"],
+    default: "agent"
   }
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('agent', userSchema);
