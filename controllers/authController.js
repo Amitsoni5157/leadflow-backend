@@ -44,24 +44,23 @@ exports.login = async (req, res) => {
 
     console.log("LOGIN BODY:", req.body);
 
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email });
 
     console.log("USER FOUND:", user);
 
-    if (!user) {
+    if (!user || user.password !== password) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = require('jsonwebtoken').sign(
+    const token = jwt.sign(
       {
         userId: user._id,
         role: user.role
       },
       "secretkey",
-      { expiresIn: "7d" } // ✅ add this
-   );
+      { expiresIn: "7d" }
+    );
 
-    // ✅ FIXED RESPONSE
     res.json({
       token,
       role: user.role,
